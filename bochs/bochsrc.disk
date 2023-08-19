@@ -4,16 +4,16 @@ romimage:file=$BXSHARE/BIOS-bochs-latest
  
 vgaromimage:file=$BXSHARE/VGABIOS-lgpl-latest
  
-floppya:1_44=sakura.img,status=inserted
+#floppya:1_44=sakura.img,status=inserted
  
 #软盘映射 
-boot:floppy
+#boot:floppy
 #硬盘
-#boot:disk
+boot:disk
  
 #分配HD为60M，根据分配硬盘大小，cylinders, heads, spt会变化
-#ata0: enabled=1, ioaddr1=0x1f0, ioaddr2=0x3f0, irq=14
-#ata0-master: type=disk, mode=flat, path="boot.img", cylinders=121, heads=16, spt=63
+ata0: enabled=1, ioaddr1=0x1f0, ioaddr2=0x3f0, irq=14
+ata0-master: type=disk, mode=flat, path="sakura.img", cylinders=121, heads=16, spt=63
  
 log:bochsout.txt
  

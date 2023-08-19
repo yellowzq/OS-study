@@ -30,7 +30,7 @@
 00000000000i[     ]   SB16 support: no
 00000000000i[     ]   USB support: no
 00000000000i[     ]   VGA extension support: vbe
-00000000000i[MEM0 ] allocated memory at 0x7f910b7dd010. after alignment, vector=0x7f910b7de000
+00000000000i[MEM0 ] allocated memory at 0x7ff29cbdd010. after alignment, vector=0x7ff29cbde000
 00000000000i[MEM0 ] 32.00MB
 00000000000i[MEM0 ] mem block size = 0x00100000, blocks=32
 00000000000i[MEM0 ] rom at 0xfffe0000/131072 ('/home/sakura/OSTools/bochs/share/bochs/BIOS-bochs-latest')
@@ -40,14 +40,13 @@
 00000000000i[DEV  ] PIIX3 PCI-to-ISA bridge present at device 1, function 0
 00000000000i[     ] init_dev of 'cmos' plugin device by virtual method
 00000000000i[CMOS ] Using local time for initial clock
-00000000000i[CMOS ] Setting initial clock to: Sun Jul 30 16:35:50 2023 (time0=1690706150)
+00000000000i[CMOS ] Setting initial clock to: Sat Aug 19 22:04:29 2023 (time0=1692453869)
 00000000000i[     ] init_dev of 'dma' plugin device by virtual method
 00000000000i[DMA  ] channel 4 used by cascade
 00000000000i[     ] init_dev of 'pic' plugin device by virtual method
 00000000000i[     ] init_dev of 'pit' plugin device by virtual method
 00000000000i[     ] init_dev of 'floppy' plugin device by virtual method
 00000000000i[DMA  ] channel 2 used by Floppy Drive
-00000000000i[FDD  ] fd0: 'sakura.img' ro=0, h=2,t=80,spt=18
 00000000000i[     ] init_dev of 'vga' plugin device by virtual method
 00000000000i[MEM0 ] Register memory access handlers: 0x0000000a0000 - 0x0000000bffff
 00000000000i[VGA  ] interval=200000
@@ -67,7 +66,11 @@
 00000000000i[     ] init_dev of 'keyboard' plugin device by virtual method
 00000000000i[KBD  ] will paste characters every 400 keyboard ticks
 00000000000i[     ] init_dev of 'harddrv' plugin device by virtual method
-00000000000i[HD   ] Using boot sequence floppy, none, none
+00000000000i[HD   ] HD on ata0-0: 'sakura.img', 'flat' mode
+00000000000i[IMG  ] hd_size: 62447616
+00000000000i[HD   ] ata0-0: using specified geometry: CHS=121/16/63
+00000000000i[HD   ] translation on ata0-0 set to 'none'
+00000000000i[HD   ] Using boot sequence disk, none, none
 00000000000i[HD   ] Floppy boot signature check is enabled
 00000000000i[     ] init_dev of 'pci_ide' plugin device by virtual method
 00000000000i[DEV  ] PIIX3 PCI IDE controller present at device 1, function 1
@@ -185,27 +188,29 @@
 00001529158i[BXVGA] VBE known Display Interface b0c5
 00001532083i[VBIOS] VBE Bios $Id: vbe.c,v 1.64 2011/07/19 18:25:05 vruppert Exp $
 00001600000i[XGUI ] charmap update. Font Height is 16
-00014040326i[BIOS ] Booting from 0000:7c00
-00374400000i[     ] Ctrl-C detected in signal handler.
-00374400000i[XGUI ] Mouse capture off
-00374400000i[     ] dbg: Quit
-00374400000i[CPU0 ] CPU is in real mode (active)
-00374400000i[CPU0 ] CS.mode = 16 bit
-00374400000i[CPU0 ] SS.mode = 16 bit
-00374400000i[CPU0 ] EFER   = 0x00000000
-00374400000i[CPU0 ] | EAX=00000600  EBX=00000700  ECX=00090000  EDX=0000184f
-00374400000i[CPU0 ] | ESP=00007c00  EBP=00000000  ESI=000e0000  EDI=0000ffac
-00374400000i[CPU0 ] | IOPL=0 id vip vif ac vm rf nt of df if tf SF zf af pf cf
-00374400000i[CPU0 ] | SEG sltr(index|ti|rpl)     base    limit G D
-00374400000i[CPU0 ] |  CS:0000( 0004| 0|  0) 00000000 0000ffff 0 0
-00374400000i[CPU0 ] |  DS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
-00374400000i[CPU0 ] |  SS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
-00374400000i[CPU0 ] |  ES:0000( 0005| 0|  0) 00000000 0000ffff 0 0
-00374400000i[CPU0 ] |  FS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
-00374400000i[CPU0 ] |  GS:b800( 0005| 0|  0) 000b8000 0000ffff 0 0
-00374400000i[CPU0 ] | EIP=00007c5c (00007c5c)
-00374400000i[CPU0 ] | CR0=0x60000010 CR2=0x00000000
-00374400000i[CPU0 ] | CR3=0x00000000 CR4=0x00000000
-00374400000i[CMOS ] Last time is 1690706243 (Sun Jul 30 16:37:23 2023)
-00374400000i[XGUI ] Exit
-00374400000i[CTRL ] quit_sim called with exit code 0
+00001871695i[BIOS ] ata0-0: PCHS=121/16/63 translation=none LCHS=121/16/63
+00005748901i[BIOS ] IDE time out
+00017824339i[BIOS ] Booting from 0000:7c00
+00167200000i[     ] Ctrl-C detected in signal handler.
+00167200000i[XGUI ] Mouse capture off
+00167200000i[     ] dbg: Quit
+00167200000i[CPU0 ] CPU is in real mode (active)
+00167200000i[CPU0 ] CS.mode = 16 bit
+00167200000i[CPU0 ] SS.mode = 16 bit
+00167200000i[CPU0 ] EFER   = 0x00000000
+00167200000i[CPU0 ] | EAX=00000000  EBX=00000b00  ECX=00090000  EDX=000001f0
+00167200000i[CPU0 ] | ESP=00007c00  EBP=00000000  ESI=00000002  EDI=00000001
+00167200000i[CPU0 ] | IOPL=0 id vip vif ac vm rf nt of df if tf sf zf AF PF cf
+00167200000i[CPU0 ] | SEG sltr(index|ti|rpl)     base    limit G D
+00167200000i[CPU0 ] |  CS:0000( 0004| 0|  0) 00000000 0000ffff 0 0
+00167200000i[CPU0 ] |  DS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
+00167200000i[CPU0 ] |  SS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
+00167200000i[CPU0 ] |  ES:0000( 0005| 0|  0) 00000000 0000ffff 0 0
+00167200000i[CPU0 ] |  FS:0000( 0005| 0|  0) 00000000 0000ffff 0 0
+00167200000i[CPU0 ] |  GS:b800( 0005| 0|  0) 000b8000 0000ffff 0 0
+00167200000i[CPU0 ] | EIP=00000960 (00000960)
+00167200000i[CPU0 ] | CR0=0x60000010 CR2=0x00000000
+00167200000i[CPU0 ] | CR3=0x00000000 CR4=0x00000000
+00167200000i[CMOS ] Last time is 1692453910 (Sat Aug 19 22:05:10 2023)
+00167200000i[XGUI ] Exit
+00167200000i[CTRL ] quit_sim called with exit code 0
