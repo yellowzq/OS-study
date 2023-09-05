@@ -1,3 +1,4 @@
+;@filename: loader.S
 %include "boot.inc"
 section loader vstart=LOADER_BASE_ADDR
 LOADER_STACK_TOP equ LOADER_BASE_ADDR
@@ -16,20 +17,20 @@ DATA_STACK_DESC:    dd  0x0000FFFF
 VIDEO_DESC:     dd  0x80000007  ;limit=(0xbffff-0xb8000)/4k=0x7
                 dd  DESC_VIDEO_HIGH4    ;此时dp1为0
 
-    GDT_SIZE    equ $-GDT_BASE
-    GDT_LIMIT  equ GDT_SIZE-1
-    times 60 dq 0       ;此处预留60个描述符的空位
-    SELECTOR_CODE   equ (0x0001<<3) + TI_GDT + RPL0
-        ;相当于（CODE_DESC-GDT_BASE）/8+TI_GDT+RPL0
-    SELECTOR_DATA   equ (0x0002<<3) + TI_GDT + RPL0
-    SELECTOR_VIDEO   equ (0x0003<<3) + TI_GDT + RPL0
+GDT_SIZE    equ $-GDT_BASE
+GDT_LIMIT  equ GDT_SIZE-1
+times 60 dq 0       ;此处预留60个描述符的空位
+SELECTOR_CODE   equ (0x0001<<3) + TI_GDT + RPL0
+    ;相当于（CODE_DESC-GDT_BASE）/8+TI_GDT+RPL0
+SELECTOR_DATA   equ (0x0002<<3) + TI_GDT + RPL0
+SELECTOR_VIDEO   equ (0x0003<<3) + TI_GDT + RPL0
 
-    ;以下是 gdt 的指针，前2字节是gdt界限，后4字节是 gdt 的起始地址
-    gdt_ptr dw  GDT_LIMIT
-            dd  GDT_BASE
-        loadermsg   db  '2 loader in real.'
+;以下是 gdt 的指针，前2字节是gdt界限，后4字节是 gdt 的起始地址
+gdt_ptr dw  GDT_LIMIT
+        dd  GDT_BASE
+loadermsg   db  '2 loader in real.'
         
-        loader_start:
+loader_start:
 
 ;----------------------------------------------
 ;INT    0x10    功能号:0x13     功能描述:打印字符串
@@ -80,7 +81,7 @@ VIDEO_DESC:     dd  0x80000007  ;limit=(0xbffff-0xb8000)/4k=0x7
 [bits 32]
 p_mode_start:
     mov ax, SELECTOR_DATA
-    mov dx, ax
+    mov ds, ax
     mov es, ax
     mov ss, ax
     mov esp, LOADER_STACK_TOP
