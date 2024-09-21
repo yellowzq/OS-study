@@ -1,8 +1,8 @@
 ;@filename: loader.S
-%include "boot.inc"
+%include "include/boot.inc"
 section loader vstart=LOADER_BASE_ADDR
 LOADER_STACK_TOP equ LOADER_BASE_ADDR
-jmp loader_start
+;jmp loader_start
 
 ;构建 gdt 及其内部的描述符
 GDT_BASE:   dd  0x00000000
@@ -20,74 +20,146 @@ VIDEO_DESC:     dd  0x80000007  ;limit=(0xbffff-0xb8000)/4k=0x7
 GDT_SIZE    equ $-GDT_BASE
 GDT_LIMIT  equ GDT_SIZE-1
 times 60 dq 0       ;此处预留60个描述符的空位
-SELECTOR_CODE   equ (0x0001<<3) + TI_GDT + RPL0
-    ;相当于（CODE_DESC-GDT_BASE）/8+TI_GDT+RPL0
+
+SELECTOR_CODE   equ (0x0001<<3) + TI_GDT + RPL0     ;相当于（CODE_DESC-GDT_BASE）/8+TI_GDT+RPL0
 SELECTOR_DATA   equ (0x0002<<3) + TI_GDT + RPL0
 SELECTOR_VIDEO   equ (0x0003<<3) + TI_GDT + RPL0
+
+; total_mem_bytes 用于保存内存容量，以字节为单位，此位置比较好记
+; 当前偏移 loader.bin 文件头 0x200字节
+; loader.bin 的加载地址是 0x900
+; 故 total_mem_bytes 内存中的地址是 0xb00
+; 将来在内核中咱们会引用此地址
+total_mem_bytes dd 0
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;以下是 gdt 的指针，前2字节是gdt界限，后4字节是 gdt 的起始地址
 gdt_ptr dw  GDT_LIMIT
         dd  GDT_BASE
-loadermsg   db  '2 loader in real.'
-        
+
+;人工对齐： total_mem_bytes4 + gdt_ptr6 + ards_buf244 + ards_nr2 共256字节
+ards_buf times 244 db 0
+ards_nr dw 0                ;用于记录 ARDS 结构体数量
+
 loader_start:
+;------ int 15h eax=0x0000e820, edx=0x534d4150 ('SMAP')获取内存布局
+;功能：利用BIOS中断0x15 子功能 0xe820获取内存
+;内存信息的内容用地址范围描述符（ARDS）来描述
+    xor ebx,ebx
+    mov di,ards_buf
+    mov edx,0x534d4150                  ;循环过程中EDX不变
+.e820_mem_get_loop:                     ;循环获取每个 ARDS 内存范围描述结构
+    mov eax,0x0000e820                  ;执行完 int 0x15后，eax=0x534d4150
+    mov ecx,20
+    int 0x15
+    jc .e820_failed_so_try_e801         ;若cf位为1则有错误发生，尝试0xe801子功能
+    add di,cx
+    inc word [ards_nr]                  ;记录 ARDS 数量
+    cmp ebx,0                           ;若ebx为0且cf不为1，这说明ards全部返回
+    jnz .e820_mem_get_loop
 
-;----------------------------------------------
-;INT    0x10    功能号:0x13     功能描述:打印字符串
-;----------------------------------------------
-;输入:
-;AH 子功能号=13H
-;BH = 页码
-;BL = 属性（若AL=0x00H或01H）
-;CX = 字符串长度
-;(DH、DL)=坐标（行、列）
-;ES:BP=字符串地址
-;AL=显示输出方式
-; 0 --- 字符串中只含显示字符，其显示属性在BL中
-        ;显示后，光标位置不变
-; 1 --- 字符串中只含显示字符，其显示属性在BL中
-        ;显示后，光标位置改变
-; 2 --- 字符串中含显示字符和显示属性。显示后，光标位置不变
-; 3 --- 字符串中含显示字符和显示属性。显示后，光标位置改变
-; 无返回值
-    mov sp, LOADER_BASE_ADDR
-    mov bp, loadermsg           ; ES:BP = 字符串地址
-    mov cx, 17                  ; CX = 字符串长度
-    mov ax, 0x1301              ; AH = 13, AL = 01h
-    mov bx, 0x001f              ;页号为 0（BH=0）蓝底粉红字（BL = 1fh）
-    mov dx, 0x1800
-    int 0x10                    ; 10h号中断
+;在所有 ards 结构中，找出(base_add_low + length_low)的最大值，即内存的容量
+    mov cx,[ards_nr]
+;遍历每一个 ARDS 结构体，循环次数是 ARDS 的数量
+    mov ebx, ards_buf
+    xor edx, edx                        ;edx为最大的内存容量，在此先清 0
+.find_max_mem_area:
+;无需判断 type 是否为 1，最大的内存块一定是可被使用的
+    mov eax, [ebx]                      ;base_add_low
+    add eax, [ebx+8]                    ;length_low
+    add ebx, 20                         ;指向缓冲区中下一个 ards结构
+    cmp edx, eax
+;冒泡排序，找出最大，edx寄存器始终是最大的内存容量
+    jge .next_ards
+    mov edx, eax                        ;edx为总内存大小
+.next_ards:
+    loop .find_max_mem_area
+    jmp .mem_get_ok
 
-;-------- 准备进入保护模式 ----------------------
-; 1 打开A20
-; 2 加载gdt
-; 3 将 cr0 的 pe 位置 1
+;-------- int 15h ax = e801h 获取内存大小，最大支持4G
+;返回后，ax cx值一样，以 KB 为单位，bx dx值一样，以64KB为单位
+;在ax和cx寄存器中为低16MB，在bx和dx寄存器中为16MB到4GB
+.e820_failed_so_try_e801:
+    mov ax, 0xe801
+    int 0x15
+    jc .e801_failed_so_try88            ;若当前 e801 方法失败，就尝试0x88方法
 
-    ;-------------------- 打开A20 -----------------
-    in al, 0x92
-    or al, 0000_0010B
-    out 0x92,al
+; 1 先算出低15MB内存
+; ax和cx中是以KB为单位的内存数量，将其转换为以byte为单位
+    mov cx,0x400                        ;cx和ax值一样，cx用作乘数
+    mul cx
+    shl edx,16
+    and eax,0x0000ffff
+    or edx,eax
+    add edx,0x100000                    ;ax知识15MB，故要加1MB
+    mov esi,edx                         ;先把低15MB的内存容量存入esi寄存器备份
+; 2 再将16MB以上的内存转换为byte单位
+;寄存器bx和dx中是以64kb为单位的内存数量
+    xor eax,eax
+    mov ax,bx
+    mov ecx,0x10000                     ;0x10000十进制为64kb
+    mul ecx                             ;32为乘法，默认的被乘数是eax，积为64位
+                                        ;高32为存入edx，低32位存入eax
+    add esi,eax
+;由于此方法只能测出 4GB 以内的内存，故32位eax足够了
+    ;edx肯定为0，只加eax便可
+    mov edx,esi                         ;edx为总内存大小
+    jmp .mem_get_ok
 
-    ;-------------------- 加载GDT -----------------
-    lgdt [gdt_ptr]
+;------- int 15h ah=0x88 获取内存大小，只能获取 64MB 之内 --------
+.e801_failed_so_try88:
+    ;int 15后，ax存入的是以KB为单位的内存容量
+    mov ah,0x88
+    int 0x15
+    jc .error_hlt
+    and eax,0x0000ffff
 
-    ;-------------------- cr0 第 0 位置 1----------
-    mov eax, cr0
-    or eax, 0x00000001
-    mov cr0, eax
+    ;16位乘法，被乘数是ax，积为32位。积的高16位在dx中
+    ;积的低16位在ax中
+    mov cx,0x400                        ;0x400等于1024，将ax中的内存容量换位以byte为单位
+    mul cx
+    shl edx,16                          ;把dx移到高16位
+    or edx,eax                          ;把积的低16为组合到edx，为32位的积
+    add edx,0x100000                    ;0x88子功能只会返回1MB以上的内存
+                                        ;故实际内存大小要加上1MB
 
-    jmp dword SELECTOR_CODE:p_mode_start    ;刷新流水线
+.error_hlt:
+    jmp $
+
+
+.mem_get_ok:
+  mov [total_mem_bytes], edx            ;将内存换为bytes为单位然后存入total_mem_bytes中
+
+;---------------- 准备进入保护模式 ------------------
+;1 打开A20
+;2 加载gdt
+;3.将CR0的PE位置0,
+
+  ;------------=- 打开A20 --------------
+  in al,0x92
+  or al,0000_0010B
+  out 0x92,al
+
+  ;------------- 加载GDT --------------
+  lgdt [gdt_ptr]
+
+  ;------------- CR0第0位置1 ----------
+  mov eax, cr0
+  or eax, 0x00000001
+  mov cr0, eax
+
+  jmp dword SELECTOR_CODE:p_mode_start ;刷新流水线
 
 [bits 32]
 p_mode_start:
-    mov ax, SELECTOR_DATA
-    mov ds, ax
-    mov es, ax
-    mov ss, ax
-    mov esp, LOADER_STACK_TOP
-    mov ax, SELECTOR_VIDEO
-    mov gs, ax
-    
-    mov byte [gs:160], 'P'
+  mov ax, SELECTOR_DATA
+  mov ds, ax
+  mov es, ax
+  mov ss, ax
+  mov esp, LOADER_STACK_TOP
+  mov ax, SELECTOR_VIDEO
+  mov gs, ax
 
-    jmp $
+  mov byte [gs:160], 'p'
+
+  jmp $
