@@ -1,0 +1,8 @@
+(base) sakura@ubuntu:~/OSTools/bochs/boot$ nasm -f elf -o kernel/print.o kernel/print.S
+(base) sakura@ubuntu:~/OSTools/bochs/boot$ gcc -no-pie -fno-pic -m32 -I kernel/ -c -o kernel/main.o kernel/main.c
+(base) sakura@ubuntu:~/OSTools/bochs/boot$ ld -m elf_i386 -Ttext 0xc0001500 -e main -o kernel.bin kernel/main.o kernel/print.o
+(base) sakura@ubuntu:~/OSTools/bochs/boot$ dd if=kernel.bin of=/home/sakura/OSTools/bochs/sakura.img bs=512 count=200 seek=9 conv=notrunc
+19+1 records in
+19+1 records out
+9736 bytes (9.7 kB, 9.5 KiB) copied, 0.00126509 s, 7.7 MB/s
+(base) sakura@ubuntu:~/OSTools/bochs/boot$ 
