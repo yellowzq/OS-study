@@ -7,4 +7,4 @@
 (base) sakura@ubuntu:~/OSTools/bochs/boot$ dd if=build/kernel.bin of=/home/sakura/OSTools/bochs/sakura.img bs=512 count=200 seek=9 conv=notrunc
 22+1 records in
 22+1 records out
-11436 bytes (11 kB, 11 KiB) copied, 0.00455994 s, 2.5 MB/s
+11536 bytes (12 kB, 11 KiB) copied, 0.000930113 s, 12.4 MB/s
