@@ -2,6 +2,8 @@
 #define __LIB_KERNEL_BITMAP_H
 #include "global.h"
 #define BITMAP_MASK 1
+
+typedef int bool;
 struct bitmap
 {
     uint32_t btmp_bytes_len;
@@ -10,7 +12,7 @@ struct bitmap
 };
 
 void bitmap_init(struct bitmap* btmp);
-void bitmap_scan_test(struct bitmap* btmp, uint32_t bit_idxI);
+bool bitmap_scan_test(struct bitmap* btmp, uint32_t bit_idx);
 int bitmap_scan(struct bitmap* btmp, uint32_t cnt);
 void bitmap_set(struct bitmap* btmp, uint32_t bit_idx, int8_t value);
 #endif
