@@ -1,5 +1,12 @@
-(base) sakura@ubuntu:~/OSTools/bochs/c$ make build
+(base) sakura@ubuntu:~/OSTools/bochs/c$ make all
+if [[ ! -d ./build ]];then mkdir ./build;fi
+/bin/sh: 1: [[: not found
 gcc -m32 -fno-stack-protector -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -c -fno-builtin -W -Wstrict-prototypes -Wmissing-prototypes kernel/main.c -o build/main.o
+kernel/main.c: In function ‘main’:
+kernel/main.c:8:18: warning: implicit declaration of function ‘get_kernel_pages’ [-Wimplicit-function-declaration]
+    8 |     void* addr = get_kernel_pages(3);
+      |                  ^~~~~~~~~~~~~~~~
+kernel/main.c:8:18: warning: initialization of ‘void *’ from ‘int’ makes pointer from integer without a cast [-Wint-conversion]
 gcc -m32 -fno-stack-protector -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -c -fno-builtin -W -Wstrict-prototypes -Wmissing-prototypes kernel/interrupt.c -o build/interrupt.o
 gcc -m32 -fno-stack-protector -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -c -fno-builtin -W -Wstrict-prototypes -Wmissing-prototypes kernel/init.c -o build/init.o
 gcc -m32 -fno-stack-protector -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -c -fno-builtin -W -Wstrict-prototypes -Wmissing-prototypes device/timer.c -o build/timer.o
@@ -9,13 +16,39 @@ gcc -m32 -fno-stack-protector -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kerne
 gcc -m32 -fno-stack-protector -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -c -fno-builtin -W -Wstrict-prototypes -Wmissing-prototypes lib/string.c -o build/string.o
 gcc -m32 -fno-stack-protector -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -c -fno-builtin -W -Wstrict-prototypes -Wmissing-prototypes kernel/bitmap.c -o build/bitmap.o
 gcc -m32 -fno-stack-protector -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -c -fno-builtin -W -Wstrict-prototypes -Wmissing-prototypes kernel/memory.c -o build/memory.o
+kernel/memory.c:55:11: warning: no previous prototype for ‘pte_ptr’ [-Wmissing-prototypes]
+   55 | uint32_t* pte_ptr(uint32_t vaddr){
+      |           ^~~~~~~
+kernel/memory.c:66:11: warning: no previous prototype for ‘pde_ptr’ [-Wmissing-prototypes]
+   66 | uint32_t* pde_ptr(uint32_t vaddr){
+      |           ^~~~~~~
+kernel/memory.c:124:7: warning: no previous prototype for ‘malloc_page’ [-Wmissing-prototypes]
+  124 | void* malloc_page(enum pool_flags pf, uint32_t pg_cnt) {
+      |       ^~~~~~~~~~~
+kernel/memory.c:152:7: warning: no previous prototype for ‘get_kernel_pages’ [-Wmissing-prototypes]
+  152 | void* get_kernel_pages(uint32_t pg_cnt) {
+      |       ^~~~~~~~~~~~~~~~
 ld -m elf_i386 -Ttext 0xc0001500 -e main -Map ./build/kernel.map build/main.o build/interrupt.o build/init.o build/timer.o build/kernel.o build/print.o build/debug.o build/string.o build/bitmap.o build/memory.o -o build/kernel.bin
-(base) sakura@ubuntu:~/OSTools/bochs/c$ make build
-make: Nothing to be done for 'build'.
-(base) sakura@ubuntu:~/OSTools/bochs/c$ make hd
 dd if=./build/kernel.bin \
                 of=/home/sakura/OSTools/bochs/sakura.img \
                 bs=512 count=200 seek=9 conv=notrunc
-32+1 records in
-32+1 records out
-16780 bytes (17 kB, 16 KiB) copied, 0.00151542 s, 11.1 MB/s
+33+1 records in
+33+1 records out
+16984 bytes (17 kB, 17 KiB) copied, 0.00111101 s, 15.3 MB/s
+(base) sakura@ubuntu:~/OSTools/bochs/c$ make all
+if [[ ! -d ./build ]];then mkdir ./build;fi
+/bin/sh: 1: [[: not found
+gcc -m32 -fno-stack-protector -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -c -fno-builtin -W -Wstrict-prototypes -Wmissing-prototypes kernel/memory.c -o build/memory.o
+kernel/memory.c:55:11: warning: no previous prototype for ‘pte_ptr’ [-Wmissing-prototypes]
+   55 | uint32_t* pte_ptr(uint32_t vaddr){
+      |           ^~~~~~~
+kernel/memory.c:66:11: warning: no previous prototype for ‘pde_ptr’ [-Wmissing-prototypes]
+   66 | uint32_t* pde_ptr(uint32_t vaddr){
+      |           ^~~~~~~
+ld -m elf_i386 -Ttext 0xc0001500 -e main -Map ./build/kernel.map build/main.o build/interrupt.o build/init.o build/timer.o build/kernel.o build/print.o build/debug.o build/string.o build/bitmap.o build/memory.o -o build/kernel.bin
+dd if=./build/kernel.bin \
+                of=/home/sakura/OSTools/bochs/sakura.img \
+                bs=512 count=200 seek=9 conv=notrunc
+33+1 records in
+33+1 records out
+16984 bytes (17 kB, 17 KiB) copied, 0.00134951 s, 12.6 MB/ss
