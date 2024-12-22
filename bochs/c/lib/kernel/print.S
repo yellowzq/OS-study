@@ -213,3 +213,27 @@ put_int:
     jl .put_each_num
     popad
     ret
+
+global set_cursor
+set_cursor:
+	pushad
+
+	mov bx, [esp + 36]
+	; 先设置高8位
+	mov dx, 0x03d4            ; 先操作索引寄存器
+	mov al, 0x0e              ; 用于设置光标位置的高8位索引值
+	out dx, al                ; 将索引值写入索引寄存器
+	mov dx, 0x03d5            ; 通过读写数据端口0x03d5来获得或设置光标位置
+	mov al, bh
+	out dx, al
+
+	; 再设置低8位
+	mov dx, 0x03d4
+	mov al, 0x0f
+	out dx, al
+	mov dx, 0x03d5
+	mov al, bl
+	out dx, al
+
+	popad
+	ret

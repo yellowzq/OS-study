@@ -1,10 +1,5 @@
 (base) sakura@ubuntu:~/OSTools/bochs/c$ make all
 if [ ! -d ./build ];then mkdir ./build;fi
-gcc -m32 -fno-stack-protector -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -c -fno-builtin -W -Wstrict-prototypes -Wmissing-prototypes kernel/main.c -o build/main.o
-gcc -m32 -fno-stack-protector -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -c -fno-builtin -W -Wstrict-prototypes -Wmissing-prototypes kernel/interrupt.c -o build/interrupt.o
-gcc -m32 -fno-stack-protector -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -c -fno-builtin -W -Wstrict-prototypes -Wmissing-prototypes kernel/init.c -o build/init.o
-gcc -m32 -fno-stack-protector -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -c -fno-builtin -W -Wstrict-prototypes -Wmissing-prototypes device/timer.c -o build/timer.o
-nasm -f elf kernel/kernel.S -o build/kernel.o
 nasm -f elf lib/kernel/print.S -o build/print.o
 gcc -m32 -fno-stack-protector -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -c -fno-builtin -W -Wstrict-prototypes -Wmissing-prototypes kernel/debug.c -o build/debug.o
 gcc -m32 -fno-stack-protector -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -c -fno-builtin -W -Wstrict-prototypes -Wmissing-prototypes lib/string.c -o build/string.o
@@ -16,12 +11,21 @@ kernel/memory.c:55:11: warning: no previous prototype for ‘pte_ptr’ [-Wmissi
 kernel/memory.c:66:11: warning: no previous prototype for ‘pde_ptr’ [-Wmissing-prototypes]
    66 | uint32_t* pde_ptr(uint32_t vaddr){
       |           ^~~~~~~
+nasm -f elf thread/switch.S -o build/switch.o
+gcc -m32 -fno-stack-protector -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -c -fno-builtin -W -Wstrict-prototypes -Wmissing-prototypes lib/kernel/list.c -o build/list.o
 gcc -m32 -fno-stack-protector -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -c -fno-builtin -W -Wstrict-prototypes -Wmissing-prototypes thread/thread.c -o build/thread.o
-ld -m elf_i386 -Ttext 0xc0001500 -e main -Map ./build/kernel.map build/main.o build/interrupt.o build/init.o build/timer.o build/kernel.o build/print.o build/debug.o build/string.o build/bitmap.o build/memory.o build/thread.o -o build/kernel.bin
+In file included from thread/thread.c:1:
+thread/thread.h:100:8: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+  100 | struct task_struct* running_thread();
+      |        ^~~~~~~~~~~
+thread/thread.c:20:21: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
+   20 | struct task_struct* running_thread(){
+      |                     ^~~~~~~~~~~~~~
+ld -m elf_i386 -Ttext 0xc0001500 -e main -Map ./build/kernel.map build/main.o build/interrupt.o build/init.o build/timer.o build/kernel.o build/print.o build/debug.o build/string.o build/bitmap.o build/memory.o build/switch.o build/list.o build/thread.o -o build/kernel.bin
 dd if=./build/kernel.bin \
                 of=/home/sakura/OSTools/bochs/sakura.img \
                 bs=512 count=200 seek=9 conv=notrunc
-33+1 records in
-33+1 records out
-17192 bytes (17 kB, 17 KiB) copied, 0.00208777 s, 8.2 MB/s
+51+1 records in
+51+1 records out
+26164 bytes (26 kB, 26 KiB) copied, 0.00225758 s, 11.6 MB/s
 (base) sakura@ubuntu:~/OSTools/bochs/c$ 

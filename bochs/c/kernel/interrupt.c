@@ -26,7 +26,6 @@ struct gate_desc {
 static void make_idt_desc(struct gate_desc* p_gdesc, uint8_t attr, intr_handler function);
 static struct gate_desc idt[IDT_DESC_CNT];      //idt是中断描述符表，本质上就是个中断门描述符数组
 
-extern intr_handler intr_entry_table[IDT_DESC_CNT];     //声明引用定义在kernel.S中的中断处理函数入口数组
 char* intr_name[IDT_DESC_CNT];      //用于保存异常的名字
 intr_handler idt_table[IDT_DESC_CNT];       //定义中断处理程序数组，在kernel.S中定义的intrXXentry知识中断处理程序入口，最终调用的是ide_table中的处理程序
 extern intr_handler intr_entry_table[IDT_DESC_CNT];     //声明引用定义在kernel.S中的中断处理函数入口数组
@@ -72,12 +71,31 @@ static void idt_desc_init(void){
 
 /* 通用的中断处理函数，一般用在异常出现时的处理*/
 static void general_intr_handler(uint8_t vec_nr){
-    if(vec_nr==0x27||vec_nr==0x2f){     //IRQ7 和 IRQ15会产生伪中断（spurious interrupt），无需处理0x2f是从片8259A上的最后一个IRQ引脚，保留项
-        return;
+    if(vec_nr==0x27||vec_nr==0x2f){     //0x2f是从片8259A上的最后一个IRQ引脚，保留项
+        return;                         //IRQ7 和 IRQ15会产生伪中断（spurious interrupt），无需处理
     }
-    put_str("int vector : 0x");
-    put_int(vec_nr);
-    put_char('\n');
+/* 将光标置为0，从屏幕左上角清出一篇打印异常信息的区域，方便阅读*/
+    set_cursor(0);
+    int cursor_pos = 0;
+    while(cursor_pos < 320){
+        put_char(' ');
+        cursor_pos++;
+    }
+
+    set_cursor(0);          //重置光标为屏幕左上角
+    put_str("!!!!!!!!       excetion message begin !!!!!!!!\n");
+    set_cursor(88);         //从第2行第8个字符开始打印
+    put_str(intr_name[vec_nr]);
+    if(vec_nr == 14){       //若为 Pagefault，将确实的地址打印出来并悬停
+        int page_fault_vaddr = 0;
+        asm ("movl %%cr2, %0" : "=r" (page_fault_vaddr));       //cr2是存放造成 page_fault 的地址
+        put_str("\npage fualt addr is ");
+        put_int(page_fault_vaddr);
+    }
+    put_str("\n!!!!!!!!     excetion message end   !!!!!!!!\n");
+    // 能进入中断处理程序就表示已经处在关中断情况下
+    // 不会出现调度进程的情况。故下面的死循环不再被中断
+    while(1);
 }
 
 /* 完成一般中断处理函数注册及异常名称注册*/
@@ -157,4 +175,11 @@ enum intr_status intr_get_status(){
     uint32_t eflags = 0;
     GET_EFLAGS(eflags);
     return (EFLAGS_IF & eflags) ? INTR_ON : INTR_OFF;
+}
+
+/* 在中断处理程序数组第 vector_no 个元素中注册安装中断处理程序 function*/
+void register_handler(uint8_t vector_no, intr_handler function){
+    /* idt_table 数组中的函数是在进入中断后根据中断向量号调用的
+     * 见 kernel/kernel.S 的 call [idt_talbe + %1*4] */
+     idt_table[vector_no] = function;
 }
