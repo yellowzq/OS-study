@@ -5,7 +5,7 @@
 #define IRQ0_FREQUENCY 100
 #define INPUT_FREQUENCY 1193180
 #define COUNTER0_VALUE INPUT_FREQUENCY / IRQ0_FREQUENCY
-#define CONTRER0_PORT 0x40
+#define COUNTER0_PORT 0x40
 #define COUNTER0_NO 0
 #define COUNTER_MODE 2
 #define READ_WRITE_LATCH 3
@@ -31,7 +31,7 @@ static void frequency_set(uint8_t counter_port, \
 void timer_init(void) {
     put_str("timer_init start\n");
     /* 设置 8253 的定时周期，也就是发中断的周期 */
-    frequency_set(CONTRER0_PORT, \
+    frequency_set(COUNTER0_PORT, \
     COUNTER0_NO, \
     READ_WRITE_LATCH,\
     COUNTER_MODE, \

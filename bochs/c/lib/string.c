@@ -23,7 +23,7 @@ void memcpy(void* dst_, const void* src_, uint32_t size){
 int memcmp(const void* a_,const void* b_, uint32_t size){
     const char* a = a_;
     const char* b = b_;
-    ASSERT(a!=NULL || b!=NULL);
+    ASSERT(a!=NULL && b!=NULL);
     while(size-- > 0){
         if(*a!=*b){
             return *a > *b ? 1: -1;
@@ -100,7 +100,7 @@ char* strcat(char* dst_, const char* src_){
 }
 
 /* 在字符串 str 中查找字符 ch 出现的次数*/
-uint32_t strchrs(const char* str, uint8_t ch){
+uint32_t strchrs(const char* str, const uint8_t ch){
     ASSERT(str != NULL);
     uint32_t ch_cnt = 0;
     const char* p = str;

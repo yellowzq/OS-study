@@ -1,6 +1,6 @@
 #ifndef __KERNEL_DEBUG_H
 #define __KERNEL_DEBUG_H
-void panic_spin(char* filename, int line, const char* func,const char* confition);
+void panic_spin(char* filename, int line, const char* func,const char* condition);
 
 /*************************** __VA_ARGS__ *******************************
 * __VA_ARGS__ 是预处理器所支持的专用标识符。

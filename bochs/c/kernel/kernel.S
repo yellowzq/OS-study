@@ -37,6 +37,7 @@ section .data
 %endmacro
 
 section .text
+global intr_exit
 intr_exit:
 ;以下是恢复上下文环境
     add esp,4               ;跳过中断号

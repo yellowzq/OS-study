@@ -15,8 +15,8 @@
 #define MEM_BITMAP_BASE 0xc009a000
 /************************************************/
 
-#define PDE_IDX(addr) ((addr & 0xffc00000) >> 22)
-#define PTE_IDX(addr) ((addr & 0x003ff000) >> 12)
+#define PDE_IDX(addr) ((addr & 0xffc00000) >> 22)      //这里是获取虚拟地址前十位，这里就是PDE的索引值
+#define PTE_IDX(addr) ((addr & 0x003ff000) >> 12)      //这里是获取虚拟地址中间十位，这里是PTE的索引值
 
 /* 0xc000_0000 是内核从虚拟地址3G起，0x10_0000意指跨过低端 1MB 内存，是虚拟地址在逻辑上连续*/
 #define K_HEAP_START 0xc0100000
@@ -36,8 +36,8 @@ struct virtual_addr kernel_vaddr;       //此结构用来给内核分配虚拟�
 static void* vaddr_get(enum pool_flags pf, uint32_t pg_cnt) {
     int vaddr_start = 0, bit_idx_start = -1;
     uint32_t cnt = 0;
-    if (pf ==PF_KERNEL) {
-        bit_idx_start = bitmap_scan(&kernel_vaddr.vaddr_bitmap, pg_cnt);
+    if (pf == PF_KERNEL) {
+        bit_idx_start = bitmap_scan(&kernel_vaddr.vaddr_bitmap, pg_cnt);    //先查找位图看是否有足够大的内存
         if (bit_idx_start == -1) {
             return NULL;
         }

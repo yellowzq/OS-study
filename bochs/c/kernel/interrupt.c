@@ -23,7 +23,7 @@ struct gate_desc {
 };
 
 // 静态函数声明，非必须
-static void make_idt_desc(struct gate_desc* g_gdesc, uint8_t attr, intr_handler function);
+static void make_idt_desc(struct gate_desc* p_gdesc, uint8_t attr, intr_handler function);
 static struct gate_desc idt[IDT_DESC_CNT];      //idt是中断描述符表，本质上就是个中断门描述符数组
 
 extern intr_handler intr_entry_table[IDT_DESC_CNT];     //声明引用定义在kernel.S中的中断处理函数入口数组

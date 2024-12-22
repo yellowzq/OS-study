@@ -3,6 +3,9 @@
         "global.h": "c",
         "debug.h": "c",
         "stdint.h": "c",
-        "memory.h": "c"
+        "memory.h": "c",
+        "string.h": "c",
+        "interrupt.h": "c",
+        "timer.h": "c"
     }
 }
