@@ -1,8 +1,0 @@
-{
-    "files.associations": {
-        "*.sh": "shellscript",
-        "console.h": "c",
-        "thread.h": "c",
-        "sync.h": "c"
-    }
-}
