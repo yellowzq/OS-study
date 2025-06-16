@@ -1,31 +1,27 @@
-(base) sakura@ubuntu:~/OSTools/bochs/c$ make all
-if [ ! -d ./build ];then mkdir ./build;fi
+sakura@u2404:~/OSTools/bochs/c$ make all
+if [ ! -d ./build ];then mkdir ./build;fi       #若没有这个目录，则创建
+gcc -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -c -fno-builtin -m32 -fno-stack-protector -W -Wstrict-prototypes -Wmissing-prototypes kernel/main.c -o build/main.o 
+gcc -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -c -fno-builtin -m32 -fno-stack-protector -W -Wstrict-prototypes -Wmissing-prototypes kernel/init.c -o build/init.o
+gcc -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -c -fno-builtin -m32 -fno-stack-protector -W -Wstrict-prototypes -Wmissing-prototypes kernel/interrupt.c -o build/interrupt.o
+gcc -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -c -fno-builtin -m32 -fno-stack-protector -W -Wstrict-prototypes -Wmissing-prototypes device/timer.c -o build/timer.o
+nasm -f elf kernel/kernel.S -o build/kernel.o
 nasm -f elf lib/kernel/print.S -o build/print.o
-gcc -m32 -fno-stack-protector -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -c -fno-builtin -W -Wstrict-prototypes -Wmissing-prototypes kernel/debug.c -o build/debug.o
-gcc -m32 -fno-stack-protector -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -c -fno-builtin -W -Wstrict-prototypes -Wmissing-prototypes lib/string.c -o build/string.o
-gcc -m32 -fno-stack-protector -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -c -fno-builtin -W -Wstrict-prototypes -Wmissing-prototypes kernel/bitmap.c -o build/bitmap.o
-gcc -m32 -fno-stack-protector -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -c -fno-builtin -W -Wstrict-prototypes -Wmissing-prototypes kernel/memory.c -o build/memory.o
-kernel/memory.c:55:11: warning: no previous prototype for ‘pte_ptr’ [-Wmissing-prototypes]
-   55 | uint32_t* pte_ptr(uint32_t vaddr){
-      |           ^~~~~~~
-kernel/memory.c:66:11: warning: no previous prototype for ‘pde_ptr’ [-Wmissing-prototypes]
-   66 | uint32_t* pde_ptr(uint32_t vaddr){
-      |           ^~~~~~~
+gcc -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -c -fno-builtin -m32 -fno-stack-protector -W -Wstrict-prototypes -Wmissing-prototypes kernel/debug.c -o build/debug.o
+gcc -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -c -fno-builtin -m32 -fno-stack-protector -W -Wstrict-prototypes -Wmissing-prototypes lib/string.c -o build/string.o
+gcc -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -c -fno-builtin -m32 -fno-stack-protector -W -Wstrict-prototypes -Wmissing-prototypes lib/kernel/bitmap.c -o build/bitmap.o
+gcc -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -c -fno-builtin -m32 -fno-stack-protector -W -Wstrict-prototypes -Wmissing-prototypes kernel/memory.c -o build/memory.o
+gcc -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -c -fno-builtin -m32 -fno-stack-protector -W -Wstrict-prototypes -Wmissing-prototypes thread/thread.c -o build/thread.o
+gcc -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -c -fno-builtin -m32 -fno-stack-protector -W -Wstrict-prototypes -Wmissing-prototypes lib/kernel/list.c -o build/list.o
 nasm -f elf thread/switch.S -o build/switch.o
-gcc -m32 -fno-stack-protector -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -c -fno-builtin -W -Wstrict-prototypes -Wmissing-prototypes lib/kernel/list.c -o build/list.o
-gcc -m32 -fno-stack-protector -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -c -fno-builtin -W -Wstrict-prototypes -Wmissing-prototypes thread/thread.c -o build/thread.o
-In file included from thread/thread.c:1:
-thread/thread.h:100:8: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
-  100 | struct task_struct* running_thread();
-      |        ^~~~~~~~~~~
-thread/thread.c:20:21: warning: function declaration isn’t a prototype [-Wstrict-prototypes]
-   20 | struct task_struct* running_thread(){
-      |                     ^~~~~~~~~~~~~~
-ld -m elf_i386 -Ttext 0xc0001500 -e main -Map ./build/kernel.map build/main.o build/interrupt.o build/init.o build/timer.o build/kernel.o build/print.o build/debug.o build/string.o build/bitmap.o build/memory.o build/switch.o build/list.o build/thread.o -o build/kernel.bin
+gcc -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -c -fno-builtin -m32 -fno-stack-protector -W -Wstrict-prototypes -Wmissing-prototypes device/console.c -o build/console.o
+gcc -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -c -fno-builtin -m32 -fno-stack-protector -W -Wstrict-prototypes -Wmissing-prototypes thread/sync.c -o build/sync.o
+ld -m elf_i386  -Ttext 0xc0001500 -e main -Map ./build/kernel.map build/main.o build/init.o build/interrupt.o build/timer.o build/kernel.o build/print.o build/debug.o build/string.o build/bitmap.o build/memory.o build/thread.o build/list.o build/switch.o build/console.o build/sync.o -o build/kernel.bin 
+ld: warning: build/switch.o: missing .note.GNU-stack section implies executable stack
+ld: NOTE: This behaviour is deprecated and will be removed in a future version of the linker
 dd if=./build/kernel.bin \
-                of=/home/sakura/OSTools/bochs/sakura.img \
-                bs=512 count=200 seek=9 conv=notrunc
-51+1 records in
-51+1 records out
-26164 bytes (26 kB, 26 KiB) copied, 0.00225758 s, 11.6 MB/s
-(base) sakura@ubuntu:~/OSTools/bochs/c$ 
+        of=/home/sakura/OSTools/bochs/sakura.img \
+        bs=512 count=200 seek=9 conv=notrunc
+52+1 records in
+52+1 records out
+26720 bytes (27 kB, 26 KiB) copied, 0.0060446 s, 4.4 MB/s
+sakura@u2404:~/OSTools/bochs/c$ 
