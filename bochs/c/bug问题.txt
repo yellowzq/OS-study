@@ -1,8 +1,0 @@
-据说出现GP异常跟编译器有关，文中作者使用gcc4.4编译测试正常，但是我这里使用gcc13.3.0，版本比较高。
-
-sakura@u2404:~/OSTools/bochs/c$ gcc --version
-gcc (Ubuntu 13.3.0-6ubuntu2~24.04) 13.3.0
-Copyright (C) 2023 Free Software Foundation, Inc.
-This is free software; see the source for copying conditions.  There is NO
-warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-

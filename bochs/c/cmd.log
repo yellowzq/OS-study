@@ -1,7 +1,13 @@
+sakura@u2404:~/OSTools/bochs/c$ make clean
+cd ./build && rm -f ./*
 sakura@u2404:~/OSTools/bochs/c$ make all
 if [ ! -d ./build ];then mkdir ./build;fi       #若没有这个目录，则创建
 gcc -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -c -fno-builtin -m32 -fno-stack-protector -W -Wstrict-prototypes -Wmissing-prototypes kernel/main.c -o build/main.o 
 gcc -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -c -fno-builtin -m32 -fno-stack-protector -W -Wstrict-prototypes -Wmissing-prototypes kernel/init.c -o build/init.o
+In file included from kernel/init.c:8:
+device/keyboard.h:4:13: warning: ‘intr_keyboard_handler’ declared ‘static’ but never defined [-Wunused-function]
+    4 | static void intr_keyboard_handler(void);
+      |             ^~~~~~~~~~~~~~~~~~~~~
 gcc -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -c -fno-builtin -m32 -fno-stack-protector -W -Wstrict-prototypes -Wmissing-prototypes kernel/interrupt.c -o build/interrupt.o
 gcc -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -c -fno-builtin -m32 -fno-stack-protector -W -Wstrict-prototypes -Wmissing-prototypes device/timer.c -o build/timer.o
 nasm -f elf kernel/kernel.S -o build/kernel.o
@@ -15,13 +21,28 @@ gcc -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -
 nasm -f elf thread/switch.S -o build/switch.o
 gcc -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -c -fno-builtin -m32 -fno-stack-protector -W -Wstrict-prototypes -Wmissing-prototypes device/console.c -o build/console.o
 gcc -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -c -fno-builtin -m32 -fno-stack-protector -W -Wstrict-prototypes -Wmissing-prototypes thread/sync.c -o build/sync.o
-ld -m elf_i386  -Ttext 0xc0001500 -e main -Map ./build/kernel.map build/main.o build/init.o build/interrupt.o build/timer.o build/kernel.o build/print.o build/debug.o build/string.o build/bitmap.o build/memory.o build/thread.o build/list.o build/switch.o build/console.o build/sync.o -o build/kernel.bin 
+gcc -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -c -fno-builtin -m32 -fno-stack-protector -W -Wstrict-prototypes -Wmissing-prototypes device/keyboard.c -o build/keyboard.o
+ld -m elf_i386  -Ttext 0xc0001500 -e main -Map ./build/kernel.map build/main.o build/init.o build/interrupt.o build/timer.o build/kernel.o build/print.o build/debug.o build/string.o build/bitmap.o build/memory.o build/thread.o build/list.o build/switch.o build/console.o build/sync.o build/keyboard.o -o build/kernel.bin 
 ld: warning: build/switch.o: missing .note.GNU-stack section implies executable stack
 ld: NOTE: This behaviour is deprecated and will be removed in a future version of the linker
 dd if=./build/kernel.bin \
         of=/home/sakura/OSTools/bochs/sakura.img \
         bs=512 count=200 seek=9 conv=notrunc
-52+1 records in
-52+1 records out
-26720 bytes (27 kB, 26 KiB) copied, 0.0060446 s, 4.4 MB/s
+53+1 records in
+53+1 records out
+27344 bytes (27 kB, 27 KiB) copied, 0.0206717 s, 1.3 MB/s
+
+
+sakura@u2404:~/OSTools/bochs/c$ make all
+if [ ! -d ./build ];then mkdir ./build;fi       #若没有这个目录，则创建
+gcc -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -c -fno-builtin -m32 -fno-stack-protector -W -Wstrict-prototypes -Wmissing-prototypes device/keyboard.c -o build/keyboard.o
+ld -m elf_i386  -Ttext 0xc0001500 -e main -Map ./build/kernel.map build/main.o build/init.o build/interrupt.o build/timer.o build/kernel.o build/print.o build/debug.o build/string.o build/bitmap.o build/memory.o build/thread.o build/list.o build/switch.o build/console.o build/sync.o build/keyboard.o -o build/kernel.bin 
+ld: warning: build/switch.o: missing .note.GNU-stack section implies executable stack
+ld: NOTE: This behaviour is deprecated and will be removed in a future version of the linker
+dd if=./build/kernel.bin \
+        of=/home/sakura/OSTools/bochs/sakura.img \
+        bs=512 count=200 seek=9 conv=notrunc
+53+1 records in
+53+1 records out
+27324 bytes (27 kB, 27 KiB) copied, 0.0052683 s, 5.2 MB/s
 sakura@u2404:~/OSTools/bochs/c$ 
