@@ -18,4 +18,4 @@ ata0-master: type=disk, mode=flat, path="sakura.img", cylinders=121, heads=16, s
 log:bochsout.txt
  
 mouse:enabled=0 
-keyboard: keymap=$BXSHARE/keymaps/x11-pc-de.map
+keyboard: keymap=$BXSHARE/keymaps/x11-pc-us.map
