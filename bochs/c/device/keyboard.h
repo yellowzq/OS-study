@@ -1,8 +1,7 @@
 #ifndef BOCHS_C_DEVICE_KEYBOARD_H
 #define BOCHS_C_DEVICE_KEYBOARD_H
 
-static void intr_keyboard_handler(void);
-
 void keyboard_init(void);
+extern struct ioqueue kbd_buf;  // 声明键盘缓冲区
 
 #endif // BOCHS_C_DEVICE_KEYBOARD_H

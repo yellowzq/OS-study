@@ -2,10 +2,6 @@ sakura@u2404:~/OSTools/bochs/c$ make all
 if [ ! -d ./build ];then mkdir ./build;fi       #若没有这个目录，则创建
 gcc -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -c -fno-builtin -m32 -fno-stack-protector -W -Wstrict-prototypes -Wmissing-prototypes kernel/main.c -o build/main.o 
 gcc -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -c -fno-builtin -m32 -fno-stack-protector -W -Wstrict-prototypes -Wmissing-prototypes kernel/init.c -o build/init.o
-In file included from kernel/init.c:8:
-device/keyboard.h:4:13: warning: ‘intr_keyboard_handler’ declared ‘static’ but never defined [-Wunused-function]
-    4 | static void intr_keyboard_handler(void);
-      |             ^~~~~~~~~~~~~~~~~~~~~
 gcc -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -c -fno-builtin -m32 -fno-stack-protector -W -Wstrict-prototypes -Wmissing-prototypes kernel/interrupt.c -o build/interrupt.o
 gcc -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -c -fno-builtin -m32 -fno-stack-protector -W -Wstrict-prototypes -Wmissing-prototypes device/timer.c -o build/timer.o
 nasm -f elf kernel/kernel.S -o build/kernel.o
@@ -35,5 +31,5 @@ dd if=./build/kernel.bin \
         bs=512 count=200 seek=9 conv=notrunc
 62+1 records in
 62+1 records out
-32172 bytes (32 kB, 31 KiB) copied, 0.0035367 s, 9.1 MB/s
+32172 bytes (32 kB, 31 KiB) copied, 0.0038056 s, 8.5 MB/s
 sakura@u2404:~/OSTools/bochs/c$ 

@@ -18,7 +18,7 @@ OBJS = $(BUILD_DIR)/main.o $(BUILD_DIR)/init.o $(BUILD_DIR)/interrupt.o $(BUILD_
 ############### C代码编译 #################
 $(BUILD_DIR)/main.o : kernel/main.c lib/kernel/print.h \
 	lib/stdint.h kernel/interrupt.h kernel/init.h lib/string.h kernel/memory.h \
-	thread/thread.h device/keyboard.h 
+	thread/thread.h device/keyboard.h device/ioqueue.h device/console.h 
 	$(CC) $(CFLAGS) $< -o $@ 						
 
 $(BUILD_DIR)/init.o : kernel/init.c kernel/init.h lib/kernel/print.h \
