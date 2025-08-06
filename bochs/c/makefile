@@ -9,14 +9,14 @@ CC = gcc
 LD = ld
 LIB = -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -I userprog/
 ASFLAGS = -f elf
-ASBINLIB = -I boot/
+ASBINLIB = -I boot/include/
 CFLAGS = -Wall $(LIB) -c -fno-builtin -m32 -fno-stack-protector -W -Wstrict-prototypes \
 				 -Wmissing-prototypes
 LDFLAGS = -m elf_i386  -Ttext $(ENTRY_POINT) -e main -Map $(BUILD_DIR)/kernel.map
 OBJS = $(BUILD_DIR)/main.o $(BUILD_DIR)/init.o $(BUILD_DIR)/interrupt.o $(BUILD_DIR)/timer.o $(BUILD_DIR)/kernel.o  \
 			 $(BUILD_DIR)/print.o $(BUILD_DIR)/debug.o $(BUILD_DIR)/string.o $(BUILD_DIR)/bitmap.o $(BUILD_DIR)/memory.o \
 			 $(BUILD_DIR)/thread.o $(BUILD_DIR)/list.o $(BUILD_DIR)/switch.o $(BUILD_DIR)/console.o $(BUILD_DIR)/sync.o \
-			 $(BUILD_DIR)/keyboard.o $(BUILD_DIR)/ioqueue.o $(BUILD_DIR)/tss.o
+			 $(BUILD_DIR)/keyboard.o $(BUILD_DIR)/ioqueue.o $(BUILD_DIR)/tss.o $(BUILD_DIR)/process.o
 
 ##############     MBR代码编译     ############### 
 $(BUILD_DIR)/mbr.bin: boot/mbr.S 
@@ -53,7 +53,7 @@ $(BUILD_DIR)/timer.o : device/timer.c device/timer.h lib/stdint.h \
 
 $(BUILD_DIR)/memory.o : kernel/memory.c kernel/memory.h \
 	lib/stdint.h lib/kernel/print.h lib/kernel/bitmap.h kernel/global.h \
-	kernel/debug.h lib/string.h
+	kernel/debug.h lib/string.h kernel/interrupt.h thread/sync.h 
 	$(CC) $(CFLAGS) $< -o $@
 
 $(BUILD_DIR)/debug.o : kernel/debug.c kernel/debug.h \
@@ -96,6 +96,12 @@ $(BUILD_DIR)/ioqueue.o : device/ioqueue.c device/ioqueue.h \
 $(BUILD_DIR)/tss.o : userprog/tss.c userprog/tss.h \
 	lib/kernel/print.h lib/stdint.h kernel/global.h lib/string.h \
 	thread/thread.h
+	$(CC) $(CFLAGS) $< -o $@
+
+$(BUILD_DIR)/process.o : userprog/process.c userprog/process.h \
+	lib/stdint.h kernel/global.h kernel/debug.h kernel/memory.h \
+	thread/thread.h lib/kernel/list.h userprog/tss.h kernel/interrupt.h \
+	lib/string.h device/console.h
 	$(CC) $(CFLAGS) $< -o $@
 
 ############### 汇编代码编译 ##################

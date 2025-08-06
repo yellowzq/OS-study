@@ -1,6 +1,6 @@
 ;主引导程序
 
-%include "include/boot.inc"
+%include "boot.inc"
 SECTION MBR VSTART=0X7C00	;程序加载到0x7c00
     ;初始化寄存器
     MOV AX, CS

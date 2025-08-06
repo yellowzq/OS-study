@@ -1,7 +1,7 @@
 #ifndef _KERNEL_GLOBAL_H
 #define _KERNEL_GLOBAL_H
 
-# include "stdint.h"
+#include "stdint.h"
 
 #define RPL0 0
 #define RPL1 1
@@ -33,7 +33,6 @@
 #define IDT_DESC_ATTR_DPL3 \
     ((IDT_DESC_P << 7) + (IDT_DESC_DPL3 << 5) + IDT_DESC_32_TYPE)
 
-#define NULL 0
 
 // GDT描述符属性
 #define DESC_G_4K 1
@@ -77,15 +76,47 @@ struct gdt_desc {
 typedef int bool;
 #define true 1
 #define false 0
-#define NULL 0
+#define NULL ((void*)0)
 
+//---------------    eflags属性    ---------------- 
+
+/********************************************************
+--------------------------------------------------------------
+		  Intel 8086 Eflags Register
+--------------------------------------------------------------
+*
+*     15|14|13|12|11|10|F|E|D C|B|A|9|8|7|6|5|4|3|2|1|0|
+*      |  |  |  |  |  | | |  |  | | | | | | | | | | | '---  CF……Carry Flag
+*      |  |  |  |  |  | | |  |  | | | | | | | | | | '---  1 MBS
+*      |  |  |  |  |  | | |  |  | | | | | | | | | '---  PF……Parity Flag
+*      |  |  |  |  |  | | |  |  | | | | | | | | '---  0
+*      |  |  |  |  |  | | |  |  | | | | | | | '---  AF……Auxiliary Flag
+*      |  |  |  |  |  | | |  |  | | | | | | '---  0
+*      |  |  |  |  |  | | |  |  | | | | | '---  ZF……Zero Flag
+*      |  |  |  |  |  | | |  |  | | | | '---  SF……Sign Flag
+*      |  |  |  |  |  | | |  |  | | | '---  TF……Trap Flag
+*      |  |  |  |  |  | | |  |  | | '---  IF……Interrupt Flag
+*      |  |  |  |  |  | | |  |  | '---  DF……Direction Flag
+*      |  |  |  |  |  | | |  |  '---  OF……Overflow flag
+*      |  |  |  |  |  | | |  '----  IOPL……I/O Privilege Level
+*      |  |  |  |  |  | | '-----  NT……Nested Task Flag
+*      |  |  |  |  |  | '-----  0
+*      |  |  |  |  |  '-----  RF……Resume Flag
+*      |  |  |  |  '------  VM……Virtual Mode Flag
+*      |  |  |  '-----  AC……Alignment Check
+*      |  |  '-----  VIF……Virtual Interrupt Flag  
+*      |  '-----  VIP……Virtual Interrupt Pending
+*      '-----  ID……ID Flag
+*
+*
+**********************************************************/
 
 #define EFLAGS_MBS (1 << 1)
-#define EFLAGS_IF_1 (1 << 9)
-#define EFLAGS_IF_0 0
-#define EFLAGS_IOPL_3 (3 << 12)
+#define EFLAGS_IF_1 (1 << 9)        // if位为1，表示允许中断
+#define EFLAGS_IF_0 0               // if位为0，表示禁止中断
+#define EFLAGS_IOPL_3 (3 << 12)     // IOPL位为3，用于测试用户程序在非系统调用下进行IO
 #define EFLAGS_IOPL_0 (0 << 12)
 #define DIV_ROUND_UP(X, STEP) ((X + STEP - 1) / STEP)
-#define PAGE_SIZE 4096
+#define PG_SIZE 4096
 
 #endif

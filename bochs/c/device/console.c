@@ -35,7 +35,7 @@ void console_put_char(uint8_t char_asci) {
 }
 
 /* 终端中输出十六进制数 */
-void console_put_hex(uint32_t num) {
+void console_put_int(uint32_t num) {
     console_acquire(); // 获取控制台锁
     put_int(num); // 调用打印函数输出十六进制数
     console_release(); // 释放控制台锁

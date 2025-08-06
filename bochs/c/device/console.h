@@ -7,5 +7,5 @@ void console_acquire(void);
 void console_release(void);
 void console_put_str(const char* str);
 void console_put_char(uint8_t char_asci);
-void console_put_hex(uint32_t num);
+void console_put_int(uint32_t num);
 #endif

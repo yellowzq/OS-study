@@ -44,7 +44,7 @@ static struct tss tss;
  * 将TSS中的esp0更新为给定线程的0级栈.
  */ 
 void update_tss_esp(struct task_struct* pthread) {
-    tss.esp0 = (uint32_t*) ((uint32_t) pthread + PAGE_SIZE);
+    tss.esp0 = (uint32_t*) ((uint32_t) pthread + PG_SIZE);
 }
 
 /**

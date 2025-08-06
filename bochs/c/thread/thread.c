@@ -6,8 +6,8 @@
 #include "interrupt.h"
 #include "print.h"
 #include "debug.h"
+#include "process.h"
 
-#define PG_SIZE 4096
 
 struct task_struct* main_thread;        // 主线程 PCB
 struct list thread_ready_list;          // 就绪队列
@@ -116,9 +116,13 @@ void schedule(void){
         /* 若此线程需要某事件发生后才能继续上 cpu 运行，
         不需要将其加入队列，因为当前线程不在就绪队列中 */
     }
+    ASSERT(!list_empty(&thread_ready_list));
+    thread_tag = NULL;	  // thread_tag清空
     thread_tag = list_pop(&thread_ready_list);
     struct task_struct* next = elem2entry(struct task_struct, general_tag, thread_tag);
     next->status = TASK_RUNNING;
+
+    process_activate(next); // 激活 next 线程的页表
     switch_to(cur,next);
 }
 
@@ -134,7 +138,7 @@ void thread_init(void){
 
 /* 线程阻塞，阻塞的线程状态为 stat */
 void thread_block(enum task_status stat){
-    ASSERT((stat == TASK_BLOCKED) || (stat == TASK_WAITING) || (stat == TASK_HANGING));
+    ASSERT(((stat == TASK_BLOCKED) || (stat == TASK_WAITING) || (stat == TASK_HANGING)));
     enum intr_status old_status = intr_disable(); // 关中断
     struct task_struct* cur_thread = running_thread();
     cur_thread->status = stat;
@@ -148,7 +152,7 @@ void thread_unblock(struct task_struct* pthread){
     ASSERT((pthread->status == TASK_BLOCKED) || (pthread->status == TASK_WAITING) || (pthread->status == TASK_HANGING));
     if(pthread->status != TASK_READY){
         ASSERT(!elem_find(&thread_ready_list, &pthread->general_tag));
-        if(elem_find(&thread_ready_list, &pthread->all_list_tag)){
+        if(elem_find(&thread_ready_list, &pthread->general_tag)){
             PANIC("thread_unblock: blocked thread in ready_list\n");
         }
         list_push(&thread_ready_list, &pthread->general_tag); // 放到就绪队列头部，使其尽快得到调度
