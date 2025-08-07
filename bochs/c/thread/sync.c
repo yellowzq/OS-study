@@ -6,7 +6,7 @@
 #include "interrupt.h"
 
 /* 初始化信号量 */
-void sema_init(struct semaphore* psema, uint32_t value) {
+void sema_init(struct semaphore* psema, uint8_t value) {
     psema->value = value;
     list_init(&psema->waiters);
 }

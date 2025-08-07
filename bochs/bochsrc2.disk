@@ -1,0 +1,21 @@
+megs:32
+ 
+romimage:file=$BXSHARE/BIOS-bochs-latest
+ 
+vgaromimage:file=$BXSHARE/VGABIOS-lgpl-latest
+ 
+#floppya:1_44=sakura.img,status=inserted
+ 
+#软盘映射 
+#boot:floppy
+#硬盘
+boot:disk
+ 
+#分配HD为60M，根据分配硬盘大小，cylinders, heads, spt会变化
+ata0: enabled=1, ioaddr1=0x1f0, ioaddr2=0x3f0, irq=14
+ata0-master: type=disk, mode=flat, path="/home/sakura/OSTools/Simple_OS_For_Studing/build/sakura.img", cylinders=121, heads=16, spt=63
+ 
+log:bochsout.txt
+ 
+mouse:enabled=0 
+keyboard: keymap=$BXSHARE/keymaps/x11-pc-us.map

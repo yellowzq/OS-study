@@ -13,6 +13,7 @@
 #define EFLAGS_IF       0x00000200  // eflags 寄存器中的 if 位为 1
 #define GET_EFLAGS(EFLAG_VAR)   asm volatile("pushfl; popl %0" : "=g" (EFLAG_VAR))
 
+
 /*中断门描述符结构体*/
 struct gate_desc {
     uint16_t    func_offset_low_word;
@@ -45,7 +46,7 @@ static void pic_init(void) {
     outb (PIC_S_DATA, 0x01); // ICW4: 8086 模式, 正常 EOI
     
     /* 测试键盘，只打开键盘中断，其他全部关闭 */
-    outb (PIC_M_DATA, 0xfc);
+    outb (PIC_M_DATA, 0xfe);
     outb (PIC_S_DATA, 0xff);
     
     put_str("pic_init done.\n");
@@ -89,7 +90,7 @@ static void general_intr_handler(uint8_t vec_nr){
     if(vec_nr == 14){       //若为 Pagefault，将确实的地址打印出来并悬停
         int page_fault_vaddr = 0;
         asm ("movl %%cr2, %0" : "=r" (page_fault_vaddr));       //cr2是存放造成 page_fault 的地址
-        put_str("\npage fualt addr is ");
+        put_str("\npage fault addr is ");
         put_int(page_fault_vaddr);
     }
     put_str("\n!!!!!!!!     excetion message end   !!!!!!!!\n");
@@ -126,18 +127,7 @@ static void exception_init(void){
     intr_name[18] = "#MC Machine-Check Exception";
     intr_name[19] = "#XF SIMD Floating-Point Exception";
 }
-/*完成有关中断描述符表*/
-void idt_init(void){
-    put_str("idt_init start\n");
-    idt_desc_init();            //初始化终端描述符表
-    exception_init();           //异常名初始化并注册通常的中断处理函数
-    pic_init();                 //初始化 8259A
-    
-    // 加载idt
-    uint64_t idt_operand = ((sizeof(idt) - 1) | ((uint64_t) ((uint32_t) idt << 16)));
-    asm volatile ("lidt %0" : : "m" (idt_operand));
-    put_str("idt_init done.\n");
-}
+
 
 /* 开中断，并返回开中断前的状态*/
 enum intr_status intr_enable(){
@@ -182,4 +172,17 @@ void register_handler(uint8_t vector_no, intr_handler function){
     /* idt_table 数组中的函数是在进入中断后根据中断向量号调用的
      * 见 kernel/kernel.S 的 call [idt_talbe + %1*4] */
      idt_table[vector_no] = function;
+}
+
+/*完成有关中断描述符表*/
+void idt_init(void){
+    put_str("idt_init start\n");
+    idt_desc_init();            //初始化终端描述符表
+    exception_init();           //异常名初始化并注册通常的中断处理函数
+    pic_init();                 //初始化 8259A
+    
+    // 加载idt
+    uint64_t idt_operand = ((sizeof(idt) - 1) | ((uint64_t) ((uint32_t) idt << 16)));
+    asm volatile ("lidt %0" : : "m" (idt_operand));
+    put_str("idt_init done.\n");
 }
