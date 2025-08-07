@@ -1,5 +1,7 @@
 #include "list.h"
 #include "interrupt.h"
+#include "stdint.h"
+#include "debug.h"
 
 /* 初始化双向链表 list*/
 void list_init(struct list* list) {
@@ -49,6 +51,7 @@ void list_remove(struct list_elem* pelem){
 
 /* 将链表第一个元素弹出并返回，类似栈的pop操作*/
 struct list_elem* list_pop(struct list* plist){
+    ASSERT(plist->head.next != &plist->tail);
     struct list_elem* elem = plist->head.next;
     list_remove(elem);
     return elem;

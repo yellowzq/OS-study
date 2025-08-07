@@ -135,7 +135,7 @@ static void page_table_add(void* _vaddr, void* _page_phyaddr) {
     
 /* 分配 pg_cnt 个页空间，成功则返回起始虚拟地址，失败时返回 NULL */
 void* malloc_page(enum pool_flags pf, uint32_t pg_cnt) {
-    ASSERT(pg_cnt > 0 && pg_cnt < 3840);
+    ASSERT(pg_cnt > 0 && pg_cnt < 32512);       //这里我们的物理内存是512字节，由于用户内存池和内核内存池各占一般，这里保守起见按照127MB，所以最多分配127MB/4KB = 32512页
     /*********** malloc_page 的原理是三个动作的合成: ***********
     1 通过 vaddr_get 在虚拟内存池中申请虚拟地址
     2 通过 palloc 在物理内存池中申请物理页

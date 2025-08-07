@@ -3,8 +3,6 @@
 #include "thread.h"
 #include "interrupt.h"
 #include "console.h"
-#include "ioqueue.h"
-#include "keyboard.h"
 #include "process.h"
 
 void k_thread_a(void*);

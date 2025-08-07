@@ -64,7 +64,7 @@ void init_thread(struct task_struct* pthread, char* name, int prio) {
     pthread->ticks = prio;
     pthread->elapsed_ticks = 0;
     pthread->pgdir = NULL;
-    pthread->stack_magic = 0x19870916; // 自定义的魔数
+    pthread->stack_magic = 0xdeadbeef; // 自定义的魔数
 }
 
 /* 创建一优先级为 prio 的线程，线程名为 name，线程所执行的函数是 function(func_arg) */
