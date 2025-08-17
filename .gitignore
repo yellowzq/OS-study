@@ -4,3 +4,5 @@
 bochs/c/build/
 bochs-2.6.2/
 os-elephant/*
+*.img
+*.bin
