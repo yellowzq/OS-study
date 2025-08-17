@@ -24,12 +24,12 @@ The following line should appear in your bochsrc:
   ata0-master: type=disk, path="/home/sakura/OSTools/bochs/sakura.img", mode=flat, cylinders=121, heads=16, spt=63
 gcc -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -I userprog/ -c -fno-builtin -m32 -fno-stack-protector -W -Wstrict-prototypes -Wmissing-prototypes kernel/main.c -o /home/sakura/OSTools/bochs/c/build/main.o 
 kernel/main.c: In function ‘k_thread_a’:
-kernel/main.c:31:11: warning: unused variable ‘para’ [-Wunused-variable]
-   31 |     char* para = arg;
+kernel/main.c:34:11: warning: unused variable ‘para’ [-Wunused-variable]
+   34 |     char* para = arg;
       |           ^~~~
 kernel/main.c: In function ‘k_thread_b’:
-kernel/main.c:41:11: warning: unused variable ‘para’ [-Wunused-variable]
-   41 |     char* para = arg;
+kernel/main.c:46:11: warning: unused variable ‘para’ [-Wunused-variable]
+   46 |     char* para = arg;
       |           ^~~~
 gcc -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -I userprog/ -c -fno-builtin -m32 -fno-stack-protector -W -Wstrict-prototypes -Wmissing-prototypes kernel/init.c -o /home/sakura/OSTools/bochs/c/build/init.o
 gcc -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -I userprog/ -c -fno-builtin -m32 -fno-stack-protector -W -Wstrict-prototypes -Wmissing-prototypes kernel/interrupt.c -o /home/sakura/OSTools/bochs/c/build/interrupt.o
@@ -49,7 +49,9 @@ gcc -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -
 gcc -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -I userprog/ -c -fno-builtin -m32 -fno-stack-protector -W -Wstrict-prototypes -Wmissing-prototypes device/ioqueue.c -o /home/sakura/OSTools/bochs/c/build/ioqueue.o
 gcc -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -I userprog/ -c -fno-builtin -m32 -fno-stack-protector -W -Wstrict-prototypes -Wmissing-prototypes userprog/tss.c -o /home/sakura/OSTools/bochs/c/build/tss.o
 gcc -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -I userprog/ -c -fno-builtin -m32 -fno-stack-protector -W -Wstrict-prototypes -Wmissing-prototypes userprog/process.c -o /home/sakura/OSTools/bochs/c/build/process.o
-ld -m elf_i386  -Ttext 0xc0001500 -e main -Map /home/sakura/OSTools/bochs/c/build/kernel.map /home/sakura/OSTools/bochs/c/build/main.o /home/sakura/OSTools/bochs/c/build/init.o /home/sakura/OSTools/bochs/c/build/interrupt.o /home/sakura/OSTools/bochs/c/build/timer.o /home/sakura/OSTools/bochs/c/build/kernel.o /home/sakura/OSTools/bochs/c/build/print.o /home/sakura/OSTools/bochs/c/build/debug.o /home/sakura/OSTools/bochs/c/build/string.o /home/sakura/OSTools/bochs/c/build/bitmap.o /home/sakura/OSTools/bochs/c/build/memory.o /home/sakura/OSTools/bochs/c/build/thread.o /home/sakura/OSTools/bochs/c/build/list.o /home/sakura/OSTools/bochs/c/build/switch.o /home/sakura/OSTools/bochs/c/build/console.o /home/sakura/OSTools/bochs/c/build/sync.o /home/sakura/OSTools/bochs/c/build/keyboard.o /home/sakura/OSTools/bochs/c/build/ioqueue.o /home/sakura/OSTools/bochs/c/build/tss.o /home/sakura/OSTools/bochs/c/build/process.o -o /home/sakura/OSTools/bochs/c/build/kernel.bin 
+gcc -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -I userprog/ -c -fno-builtin -m32 -fno-stack-protector -W -Wstrict-prototypes -Wmissing-prototypes lib/user/syscall.c -o /home/sakura/OSTools/bochs/c/build/syscall.o
+gcc -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -I userprog/ -c -fno-builtin -m32 -fno-stack-protector -W -Wstrict-prototypes -Wmissing-prototypes userprog/syscall-init.c -o /home/sakura/OSTools/bochs/c/build/syscall-init.o
+ld -m elf_i386  -Ttext 0xc0001500 -e main -Map /home/sakura/OSTools/bochs/c/build/kernel.map /home/sakura/OSTools/bochs/c/build/main.o /home/sakura/OSTools/bochs/c/build/init.o /home/sakura/OSTools/bochs/c/build/interrupt.o /home/sakura/OSTools/bochs/c/build/timer.o /home/sakura/OSTools/bochs/c/build/kernel.o /home/sakura/OSTools/bochs/c/build/print.o /home/sakura/OSTools/bochs/c/build/debug.o /home/sakura/OSTools/bochs/c/build/string.o /home/sakura/OSTools/bochs/c/build/bitmap.o /home/sakura/OSTools/bochs/c/build/memory.o /home/sakura/OSTools/bochs/c/build/thread.o /home/sakura/OSTools/bochs/c/build/list.o /home/sakura/OSTools/bochs/c/build/switch.o /home/sakura/OSTools/bochs/c/build/console.o /home/sakura/OSTools/bochs/c/build/sync.o /home/sakura/OSTools/bochs/c/build/keyboard.o /home/sakura/OSTools/bochs/c/build/ioqueue.o /home/sakura/OSTools/bochs/c/build/tss.o /home/sakura/OSTools/bochs/c/build/process.o /home/sakura/OSTools/bochs/c/build/syscall.o /home/sakura/OSTools/bochs/c/build/syscall-init.o -o /home/sakura/OSTools/bochs/c/build/kernel.bin 
 ld: warning: /home/sakura/OSTools/bochs/c/build/switch.o: missing .note.GNU-stack section implies executable stack
 ld: NOTE: This behaviour is deprecated and will be removed in a future version of the linker
 nasm -I boot/include/ boot/mbr.S -o /home/sakura/OSTools/bochs/c/build/mbr.bin
@@ -57,15 +59,15 @@ nasm -I boot/include/ boot/loader.S -o /home/sakura/OSTools/bochs/c/build/loader
 dd if=/home/sakura/OSTools/bochs/c/build/mbr.bin of=/home/sakura/OSTools/bochs/sakura.img bs=512 count=1  conv=notrunc
 1+0 records in
 1+0 records out
-512 bytes copied, 0.000925083 s, 553 kB/s
+512 bytes copied, 0.000604091 s, 848 kB/s
 dd if=/home/sakura/OSTools/bochs/c/build/loader.bin of=/home/sakura/OSTools/bochs/sakura.img bs=512 count=4 seek=2 conv=notrunc
 2+1 records in
 2+1 records out
-1396 bytes (1.4 kB, 1.4 KiB) copied, 0.00135242 s, 1.0 MB/s
+1396 bytes (1.4 kB, 1.4 KiB) copied, 0.000328395 s, 4.3 MB/s
 dd if=/home/sakura/OSTools/bochs/c/build/kernel.bin \
         of=/home/sakura/OSTools/bochs/sakura.img \
         bs=512 count=200 seek=9 conv=notrunc
-63+1 records in
-63+1 records out
-32724 bytes (33 kB, 32 KiB) copied, 0.0077427 s, 4.2 MB/s
+72+1 records in
+72+1 records out
+37084 bytes (37 kB, 36 KiB) copied, 0.0059235 s, 6.3 MB/s
 sakura@u2404:~/OSTools/bochs/c$ 
