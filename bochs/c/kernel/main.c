@@ -50,12 +50,14 @@ void k_thread_b(void* arg){
 
 /* 用户程序 A */
 void u_prog_a(void) {
-    printf(" prog_a_pid: 0x%x\n", getpid());
+    char* name = "prog_a";
+    printf(" prog_a_name: %s, prog_a_pid: 0x%x\n", name, getpid());
     while (1);
 }
 
 /* 用户程序 B */
 void u_prog_b(void) {
-    printf(" prog_b_pid: 0x%x\n", getpid());
+    char* name = "prog_b";
+    printf(" prog_b_name: %s, prog_b_pid: 0x%x\n", name, getpid());
     while (1);
 }

@@ -1,7 +1,7 @@
 sakura@u2404:~/OSTools/bochs/c$ make clean
 cd /home/sakura/OSTools/bochs/c/build && rm -f ./* && rm /home/sakura/OSTools/bochs/sakura.img
 sakura@u2404:~/OSTools/bochs/c$ make all
-if [ ! -d /home/sakura/OSTools/bochs/c/build ];then mkdir /home/sakura/OSTools/bochs/c/build;fi         #若没有这个目录，则创建
+if [ ! -d /home/sakura/OSTools/bochs/c/build ];then mkdir /home/sakura/OSTools/bochs/c/build;fi    #若没有这个目录，则创建
 if [ ! -e /home/sakura/OSTools/bochs/sakura.img ];then /home/sakura/OSTools/bochs/bin/bximage -hd -mode="flat" -size=60 -q /home/sakura/OSTools/bochs/sakura.img;fi
 ========================================================================
                                 bximage
@@ -60,15 +60,15 @@ nasm -I boot/include/ boot/loader.S -o /home/sakura/OSTools/bochs/c/build/loader
 dd if=/home/sakura/OSTools/bochs/c/build/mbr.bin of=/home/sakura/OSTools/bochs/sakura.img bs=512 count=1  conv=notrunc
 1+0 records in
 1+0 records out
-512 bytes copied, 0.00122539 s, 418 kB/s
+512 bytes copied, 0.00186463 s, 275 kB/s
 dd if=/home/sakura/OSTools/bochs/c/build/loader.bin of=/home/sakura/OSTools/bochs/sakura.img bs=512 count=4 seek=2 conv=notrunc
 2+1 records in
 2+1 records out
-1396 bytes (1.4 kB, 1.4 KiB) copied, 0.00103009 s, 1.4 MB/s
+1396 bytes (1.4 kB, 1.4 KiB) copied, 0.00247065 s, 565 kB/s
 dd if=/home/sakura/OSTools/bochs/c/build/kernel.bin \
         of=/home/sakura/OSTools/bochs/sakura.img \
         bs=512 count=200 seek=9 conv=notrunc
 72+1 records in
 72+1 records out
-37160 bytes (37 kB, 36 KiB) copied, 0.00609324 s, 6.1 MB/s
+37176 bytes (37 kB, 36 KiB) copied, 0.0052161 s, 7.1 MB/s
 sakura@u2404:~/OSTools/bochs/c$ 
