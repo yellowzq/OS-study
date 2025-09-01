@@ -2,6 +2,7 @@
 #define __KERNEL_MEMORY_H
 #include "stdint.h"
 #include "bitmap.h"
+#include "list.h"
 
 /*  内存池标记，用于判断用哪个内存池 */
 enum pool_flags{
@@ -23,13 +24,29 @@ struct virtual_addr
     uint32_t vaddr_start;           //虚拟地址起始地址
 };
 
+/* 内存块 */
+struct mem_block {
+    struct list_elem free_elem;     // 用于加入内存块链表的结点
+};
+
+/* 内存块描述符 */
+struct mem_block_desc {
+    uint32_t block_size;            // 内存块大小
+    uint32_t blocks_per_arena;      // 本arena中可容纳此mem
+    struct list free_list;          // 本des的空闲mem块链表
+};
+#define DESC_CNT 7                   // 内存块描述符个数,16,32,64,128,256,512,1024
+
 extern struct pool kernel_pool, user_pool;
 void mem_init(void);
 void* malloc_page(enum pool_flags pf, uint32_t pg_cnt);
+void malloc_init(void);
 void* get_kernel_pages(uint32_t pg_cnt);
 uint32_t* pte_ptr(uint32_t vaddr);
 uint32_t* pde_ptr(uint32_t vaddr);
 uint32_t addr_v2p(uint32_t vaddr);
 void* get_a_page(enum pool_flags pf, uint32_t vaddr);
 void* get_user_pages(uint32_t pg_cnt);
+void block_desc_init(struct mem_block_desc* desc_array);
+void* sys_malloc(uint32_t size);
 #endif

@@ -54,7 +54,8 @@ $(BUILD_DIR)/timer.o : device/timer.c device/timer.h lib/stdint.h \
 
 $(BUILD_DIR)/memory.o : kernel/memory.c kernel/memory.h \
 	lib/stdint.h lib/kernel/print.h lib/kernel/bitmap.h kernel/global.h \
-	kernel/debug.h lib/string.h kernel/interrupt.h thread/sync.h 
+	kernel/debug.h lib/string.h kernel/interrupt.h thread/sync.h \
+	lib/kernel/list.h kernel/interrupt.h
 	$(CC) $(CFLAGS) $< -o $@
 
 $(BUILD_DIR)/debug.o : kernel/debug.c kernel/debug.h \
