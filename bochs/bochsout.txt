@@ -30,7 +30,7 @@
 00000000000i[     ]   SB16 support: no
 00000000000i[     ]   USB support: no
 00000000000i[     ]   VGA extension support: vbe
-00000000000i[MEM0 ] allocated memory at 0x7788aafdd010. after alignment, vector=0x7788aafde000
+00000000000i[MEM0 ] allocated memory at 0x7799253dd010. after alignment, vector=0x7799253de000
 00000000000i[MEM0 ] 32.00MB
 00000000000i[MEM0 ] mem block size = 0x00100000, blocks=32
 00000000000i[MEM0 ] rom at 0xfffe0000/131072 ('/home/sakura/OSTools/bochs/share/bochs/BIOS-bochs-latest')
@@ -40,7 +40,7 @@
 00000000000i[DEV  ] PIIX3 PCI-to-ISA bridge present at device 1, function 0
 00000000000i[     ] init_dev of 'cmos' plugin device by virtual method
 00000000000i[CMOS ] Using local time for initial clock
-00000000000i[CMOS ] Setting initial clock to: Mon Sep  1 21:54:11 2025 (time0=1756734851)
+00000000000i[CMOS ] Setting initial clock to: Mon Sep  1 22:50:10 2025 (time0=1756738210)
 00000000000i[     ] init_dev of 'dma' plugin device by virtual method
 00000000000i[DMA  ] channel 4 used by cascade
 00000000000i[     ] init_dev of 'pic' plugin device by virtual method
@@ -146,6 +146,7 @@
 00000000000i[XGUI ] Mouse capture off
 00000000000i[     ] set SIGINT handler to bx_debug_ctrlc_handler
 00000000000i[XGUI ] Mouse capture off
+00000000000i[XGUI ] Mouse capture off
 00000000025i[MEM0 ] allocate_block: block=0x0 used 0x1 of 0x20
 00000004661i[BIOS ] $Revision: 11545 $ $Date: 2012-11-11 09:11:17 +0100 (So, 11. Nov 2012) $
 00000318044i[KBD  ] reset-disable command received
@@ -192,6 +193,4 @@
 00005748898i[BIOS ] IDE time out
 00017824346i[BIOS ] Booting from 0000:7c00
 00018038421i[MEM0 ] allocate_block: block=0x1 used 0x3 of 0x20
-00018152153i[MEM0 ] allocate_block: block=0x2 used 0x4 of 0x20
-01251200001i[     ] Ctrl-C detected in signal handler.
-01251200001i[XGUI ] Mouse capture off
+00018154933i[MEM0 ] allocate_block: block=0x2 used 0x4 of 0x20
