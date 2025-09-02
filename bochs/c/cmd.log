@@ -24,13 +24,13 @@ The following line should appear in your bochsrc:
   ata0-master: type=disk, path="/home/sakura/OSTools/bochs/sakura.img", mode=flat, cylinders=121, heads=16, spt=63
 gcc -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -I userprog/ -c -fno-builtin -m32 -fno-stack-protector -W -Wstrict-prototypes -Wmissing-prototypes kernel/main.c -o /home/sakura/OSTools/bochs/c/build/main.o 
 kernel/main.c: In function ‘k_thread_a’:
-kernel/main.c:30:11: warning: unused variable ‘para’ [-Wunused-variable]
-   30 |     char* para = arg;
-      |           ^~~~
+kernel/main.c:31:23: warning: unused parameter ‘arg’ [-Wunused-parameter]
+   31 | void k_thread_a(void* arg){
+      |                 ~~~~~~^~~
 kernel/main.c: In function ‘k_thread_b’:
-kernel/main.c:68:11: warning: unused variable ‘para’ [-Wunused-variable]
-   68 |     char* para = arg;
-      |           ^~~~
+kernel/main.c:52:23: warning: unused parameter ‘arg’ [-Wunused-parameter]
+   52 | void k_thread_b(void* arg){
+      |                 ~~~~~~^~~
 gcc -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -I userprog/ -c -fno-builtin -m32 -fno-stack-protector -W -Wstrict-prototypes -Wmissing-prototypes kernel/init.c -o /home/sakura/OSTools/bochs/c/build/init.o
 gcc -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -I userprog/ -c -fno-builtin -m32 -fno-stack-protector -W -Wstrict-prototypes -Wmissing-prototypes kernel/interrupt.c -o /home/sakura/OSTools/bochs/c/build/interrupt.o
 gcc -Wall -I lib/ -I lib/kernel/ -I lib/user/ -I kernel/ -I device/ -I thread/ -I userprog/ -c -fno-builtin -m32 -fno-stack-protector -W -Wstrict-prototypes -Wmissing-prototypes device/timer.c -o /home/sakura/OSTools/bochs/c/build/timer.o
@@ -60,15 +60,15 @@ nasm -I boot/include/ boot/loader.S -o /home/sakura/OSTools/bochs/c/build/loader
 dd if=/home/sakura/OSTools/bochs/c/build/mbr.bin of=/home/sakura/OSTools/bochs/sakura.img bs=512 count=1  conv=notrunc
 1+0 records in
 1+0 records out
-512 bytes copied, 0.000305288 s, 1.7 MB/s
+512 bytes copied, 0.00289627 s, 177 kB/s
 dd if=/home/sakura/OSTools/bochs/c/build/loader.bin of=/home/sakura/OSTools/bochs/sakura.img bs=512 count=4 seek=2 conv=notrunc
 2+1 records in
 2+1 records out
-1396 bytes (1.4 kB, 1.4 KiB) copied, 0.000114016 s, 12.2 MB/s
+1396 bytes (1.4 kB, 1.4 KiB) copied, 0.00254196 s, 549 kB/s
 dd if=/home/sakura/OSTools/bochs/c/build/kernel.bin \
         of=/home/sakura/OSTools/bochs/sakura.img \
         bs=512 count=200 seek=9 conv=notrunc
-81+1 records in
-81+1 records out
-41556 bytes (42 kB, 41 KiB) copied, 0.000345475 s, 120 MB/s
+89+1 records in
+89+1 records out
+45732 bytes (46 kB, 45 KiB) copied, 0.0086482 s, 5.3 MB/s
 sakura@u2404:~/OSTools/bochs/c$ 
