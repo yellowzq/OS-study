@@ -14,6 +14,15 @@ struct list thread_ready_list;          // 就绪队列
 struct list thread_all_list;            // 所有任务队列
 static struct list_elem* thread_tag;    // 用于保存队列中的线程结点
 struct lock pid_lock;
+struct task_struct* idle_thread;        // 闲置线程 PCB
+
+/* 系统空闲时运行的线程 */
+static void idle(void* arg UNUSED){
+    while(1){
+        thread_block(TASK_BLOCKED);   // 阻塞自己
+        asm volatile ("sti; hlt" : : : "memory");
+    }
+}
 
 extern void switch_to(struct task_struct* cur, struct task_struct* next);
 
@@ -117,6 +126,7 @@ static void make_main_thread(void){
 void schedule(void){
     ASSERT(intr_get_status() == INTR_OFF);
 
+
     struct task_struct* cur = running_thread();
     if(cur->status == TASK_RUNNING){
         // 若次线程只是 cpu 时间片到了，将其加入到就绪队列尾
@@ -130,6 +140,10 @@ void schedule(void){
         不需要将其加入队列，因为当前线程不在就绪队列中 */
     }
     ASSERT(!list_empty(&thread_ready_list));
+    if (list_empty(&thread_ready_list)){
+        // 若就绪队列中没有可运行的任务，就唤醒 idle 线程
+        thread_unblock(idle_thread);
+    }
     thread_tag = NULL;	  // thread_tag清空
     thread_tag = list_pop(&thread_ready_list);
     struct task_struct* next = elem2entry(struct task_struct, general_tag, thread_tag);
@@ -139,16 +153,6 @@ void schedule(void){
     switch_to(cur,next);
 }
 
-/* 初始化线程环境*/
-void thread_init(void){
-    put_str("thread_init start\n");
-    list_init(&thread_ready_list);
-    list_init(&thread_all_list);
-    lock_init(&pid_lock); // 初始化 pid 锁
-/* 将当前 main 函数创建为线程*/
-    make_main_thread();
-    put_str("thread_init done\n");
-}
 
 /* 线程阻塞，阻塞的线程状态为 stat */
 void thread_block(enum task_status stat){
@@ -174,4 +178,30 @@ void thread_unblock(struct task_struct* pthread){
         pthread->status = TASK_READY;
     }
     intr_set_status(old_status); // 恢复中断状态
+}
+
+/* 主动让出cpu，换其他线程执行 */
+void thread_yield(void){
+    struct task_struct* cur = running_thread();
+    enum intr_status old_status = intr_disable(); // 关中断
+    ASSERT(!elem_find(&thread_ready_list, &cur->general_tag));
+    list_append(&thread_ready_list, &cur->general_tag);
+    cur->status = TASK_READY;
+    schedule();
+    intr_set_status(old_status); // 恢复中断状态
+}
+
+/* 初始化线程环境*/
+void thread_init(void){
+    put_str("thread_init start\n");
+    list_init(&thread_ready_list);
+    list_init(&thread_all_list);
+    lock_init(&pid_lock); // 初始化 pid 锁
+/* 将当前 main 函数创建为线程*/
+    make_main_thread();
+
+    /* 创建 idle 线程 */
+    idle_thread = thread_start("idle", 10, idle, NULL);
+
+    put_str("thread_init done\n");
 }
